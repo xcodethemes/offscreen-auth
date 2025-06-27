@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Firebase OAuth Popup</title>
+
+  <body>
+    <h1 style="display:none">Firebase Auth Popup</h1>
+    </body>
+<script type="module">
+  import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { GoogleAuthProvider }       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const firebaseConfig = {
+  /* your Firebase project config */
+  apiKey: "AIzaSyCCsNx7FjgfQev0EfTnKqCkgXWi9Ji-mNU",
+  authDomain: "trade-app-b5155.firebaseapp.com",
+  projectId: "trade-app-b5155",
+  storageBucket: "trade-app-b5155.firebasestorage.app",
+  messagingSenderId: "51768261934",
+  appId: "1:51768261934:web:e03f757da64d7562cf0ebf",
+  measurementId: "G-C5BLTQS2K2",
+}
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  window.addEventListener("message", async (e) => {
+    const { providerId } = e.data;     // "google.com" etc.
+    let provider = new GoogleAuthProvider();
+
+    try {
+      const { user } = await signInWithPopup(auth, provider);
+      const idToken = await user.getIdToken();
+      e.source.postMessage({ ok:true, idToken }, e.origin);
+    } catch (err) {
+      e.source.postMessage({ ok:false, error: err.message }, e.origin);
+    }
+  }, { once:true });
+</script>

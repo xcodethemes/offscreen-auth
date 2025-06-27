@@ -1,0 +1,63 @@
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <title>Firebase Auth Popup</title>
+    <script src="auth-iframe.js"></script>
+  </head>
+  <body>
+   
+    <h1>Handling Firebase Authentication</h1>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Firebase Auth Popup</title>
+  </head>
+  <body>
+    <h1 style="display:none">Firebase Auth</h1>
+
+    <!-- 1️⃣  Mark the script as a module -->
+    <script type="module">
+      /* 2️⃣  Import the ES-module builds of Firebase directly */
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+      import { getAuth, GoogleAuthProvider, signInWithPopup }
+        from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+      /* 3️⃣  Your config (note storageBucket typo fixed) */
+      const firebaseConfig = {
+        apiKey: 'AIzaSyCCsNx7FjgfQev0EfTnKqCkgXWi9Ji-mNU',
+        authDomain: 'trade-app-b5155.web.app',
+        projectId: 'trade-app-b5155',
+        storageBucket: 'trade-app-b5155.appspot.com',
+        messagingSenderId: '51768261934',
+        appId: '1:51768261934:web:e03f757da64d7562cf0ebf',
+        measurementId: 'G-C5BLTQS2K2',
+      };
+
+      /* 4️⃣  Init Firebase */
+      const app      = initializeApp(firebaseConfig);
+      const auth     = getAuth(app);
+      const provider = new GoogleAuthProvider();
+
+      /* 5️⃣  Helper to reply to off-screen page */
+      function send(result) {
+        window.parent.postMessage(JSON.stringify(result), '*');  // or a specific origin
+      }
+
+      /* 6️⃣  Listen for the off-screen request */
+      window.addEventListener('message', async ({ data }) => {
+        if (data?.action === 'firebaseAuthPopup') {
+          try {
+            const cred = await signInWithPopup(auth, provider);
+            send({ success: true, user: cred.user.toJSON() });
+          } catch (err) {
+            send({ success: false, error: err.message });
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
